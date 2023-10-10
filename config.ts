@@ -1,0 +1,6 @@
+export const config = {
+    rpc: 'https://umee-rpc.w3coins.io',
+    coin: 'uumee',
+    gasPrice: '0.1',
+    stakingValidator: 'umeevaloper1tsd7h4erlx9wajg353dwjc56lrvlcnmeghnmk0',
+}
