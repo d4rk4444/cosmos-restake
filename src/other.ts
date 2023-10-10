@@ -19,3 +19,5 @@ export const log = (type: string, message: string, color?: string) => {
     console[type](coloredMessage);
     logger[type](message);
 };
+
+export const timeout = (ms: number) => new Promise(res => setTimeout(res, ms));

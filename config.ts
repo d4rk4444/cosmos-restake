@@ -3,4 +3,5 @@ export const config = {
     coin: 'uumee',
     gasPrice: '0.1',
     stakingValidator: 'umeevaloper1tsd7h4erlx9wajg353dwjc56lrvlcnmeghnmk0',
+    pauseTime: 3600 //in sec.
 }
