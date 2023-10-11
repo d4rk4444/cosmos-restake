@@ -1,6 +1,6 @@
 import fs from "fs";
 import consoleStamp from 'console-stamp';
-import chalk, { ChalkInstance } from 'chalk';
+import chalk from 'chalk';
 
 export const parseFile = (file: any) => {
     const data = fs.readFileSync(file, "utf-8");

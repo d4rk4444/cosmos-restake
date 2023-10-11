@@ -1,8 +1,9 @@
 import axios from "axios";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx.js";
+import { config } from "../config.js";
 
 export const getDelegatorValidators = async(address: string) => {
-    const res = await axios.get(`https://umee-api.w3coins.io/cosmos/distribution/v1beta1/delegators/${address}/validators`);
+    const res = await axios.get(`${config.restApi}/cosmos/distribution/v1beta1/delegators/${address}/validators`);
     return res.data.validators;
 }
 

@@ -1,10 +1,11 @@
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
+import { config } from "../config.js";
 
 export const dataDelegate = async(delegator: string, validator: string, amount: string) => {
     const msg: MsgDelegate = {
         delegatorAddress: delegator,
         validatorAddress: validator,
-        amount: { denom: "uumee", amount: amount },
+        amount: { denom: config.coin, amount: amount },
     };
 
     const data = {

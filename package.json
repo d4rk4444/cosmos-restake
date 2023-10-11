@@ -1,6 +1,6 @@
 {
   "name": "cosmos-restake",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "d4rk444",
   "main": "index.js",
   "devDependencies": {
