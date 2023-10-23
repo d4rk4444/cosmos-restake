@@ -8,8 +8,8 @@ export const GetSignClient = async(rpc: string, mnemonic: string) => {
     return client;
 }
 
-export const GetWallet = async(rpc: string, mnemonic: string) => {
-    const chain = await GetChain(rpc);
+export const GetWallet = async(rpc: string, mnemonic: string, prefix?: string) => {
+    const chain = prefix ? prefix : await GetChain(rpc);
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: chain });
     const [firstAccount] = await wallet.getAccounts();
 
