@@ -29,7 +29,7 @@ const DelegateTokens = async(mnemonic: string) => {
 
     const balance = parseInt((await GetBalance(rpc, address)).amount);
     let msg = await dataDelegate(address, validator, '1000');
-    const gasLimit = Math.floor(await GetEstimateGas(rpc, [msg], mnemonic) * 1.2);
+    const gasLimit = Math.floor(await GetEstimateGas(rpc, [msg], mnemonic) * 1.5);
     const fee = Math.floor(gasLimit * Number(config.gasPrice) * 10);
     const amount = balance - Math.floor(balance * 0.99) >= fee ? Math.floor(balance * 0.99) : balance - fee;
     if (amount <= 0) {
