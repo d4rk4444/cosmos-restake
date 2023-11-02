@@ -3,20 +3,23 @@ import { GetBalance, GetEstimateGas, GetWallet, SendTx } from "./src/tools.js";
 import { config } from "./config.js";
 import { dataClaimRewards, getDelegatorValidators } from "./src/distribution.js";
 import { dataDelegate } from "./src/staking.js";
+import { EncodeObject, coins } from "@cosmjs/proto-signing";
 
 const ClaimRewards = async(mnemonic: string) => {
     const rpc = config.rpc;
     const address = (await GetWallet(rpc, mnemonic)).address;
     const validators = await getDelegatorValidators(address);
 
-    let dataMsg = [];
+    let dataMsg: EncodeObject[] = [];
     for (let validator of validators) {
         const msg = await dataClaimRewards(address, validator);
         dataMsg.push(msg);
     }
-    const result = await SendTx(rpc, dataMsg, mnemonic);
+    const gasLimit = (await GetEstimateGas(rpc, dataMsg, mnemonic)).toString();
+    const amountFee = Math.ceil(Number(gasLimit) * Number(config.gasPrice));
+    const result = await SendTx(rpc, dataMsg, mnemonic, { amount: coins(amountFee, config.coin), gas: gasLimit }, '');
 
-    return { result }
+    return result
 }
 
 const DelegateTokens = async(mnemonic: string) => {
@@ -35,7 +38,8 @@ const DelegateTokens = async(mnemonic: string) => {
     }
 
     msg = await dataDelegate(address, validator, amount.toString());
-    const result = await SendTx(rpc, [msg], mnemonic);
+    const amountFee = Math.ceil(gasLimit * Number(config.gasPrice)) + 1;;
+    const result = await SendTx(rpc, [msg], mnemonic, { amount: coins(amountFee, config.coin), gas: gasLimit.toString() }, '');
 
     return { result, amount }
 }
@@ -49,12 +53,13 @@ const DelegateTokens = async(mnemonic: string) => {
             try {
                 log('log', `Start ${i+1} Wallet`);
                 await ClaimRewards(mnemonic[i]).then(res => {
-                    log('log', `Claim! Hash: ${res.result.hash}`, 'green');
+                    log('log', `Claim! Hash: ${res.hash}`, 'green');
                 });
-                await timeout(5000);
+                await timeout(1000);
                 await DelegateTokens(mnemonic[i]).then(res => {
                     log('log', `Delegate ${res?.amount} ${config.coin}! Hash: ${res?.result.hash}`, 'green');
                 });
+                log('info', `Start Pause ${pauseTime/1000} sec.`);
             } catch (err: any) {
                 log('warn', err.message, 'red');
             }

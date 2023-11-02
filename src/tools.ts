@@ -1,6 +1,8 @@
 import { DirectSecp256k1HdWallet, EncodeObject } from "@cosmjs/proto-signing";
-import { SigningStargateClient, GasPrice, StargateClient } from "@cosmjs/stargate";
+import { SigningStargateClient, GasPrice, StargateClient, StdFee } from "@cosmjs/stargate";
 import { config } from "../config.js";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import { log } from "./other.js";
 
 export const GetSignClient = async(rpc: string, mnemonic: string) => {
     const wallet = (await GetWallet(rpc, mnemonic)).wallet;
@@ -46,15 +48,18 @@ export const GetEstimateGas = async(rpc: string, msg: EncodeObject[], mnemonic: 
     return estimateGas;
 }
 
-export const SendTx = async(rpc: string, msg: EncodeObject[], mnemonic: string) => {
+export const SendTx = async(rpc: string, msg: EncodeObject[], mnemonic: string, fee: StdFee, memo: string) => {
     const client = await GetSignClient(rpc, mnemonic);
     const wallet = await GetWallet(rpc, mnemonic);
 
-    const dataTx = await client.signAndBroadcast(
+    const dataTx = await client.sign(
         wallet.address,
         msg,
-        'auto'
+        fee,
+        memo
     );
+    log('log', `Tx Ready ${wallet.address}`);
 
-    return { hash: dataTx.transactionHash, gasWanted: dataTx.gasWanted, gasUsed: dataTx.gasUsed };
+    const result = await client.broadcastTx(Uint8Array.from(TxRaw.encode(dataTx).finish()));
+    return { rawLog: result.rawLog, hash: result.transactionHash };
 }

@@ -8,8 +8,8 @@ export const parseFile = (file: any) => {
     return array;
 }
 
-export const log = (type: string, message: string, color?: string) => {
-    const output = fs.createWriteStream(`history.log`, { flags: 'a' });
+export const log = (type: string, message: string, color?: string, fileName?: string) => {
+    const output = fs.createWriteStream(`${fileName || 'history'}.log`, { flags: 'a' });
     const logger = new console.Console(output);
     consoleStamp(console, { format: ':date(HH:MM:ss) :label' });
     consoleStamp(logger, { format: ':date(yyyy/mm/dd HH:MM:ss) :label', stdout: output });
