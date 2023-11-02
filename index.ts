@@ -15,7 +15,7 @@ const ClaimRewards = async(mnemonic: string) => {
         const msg = await dataClaimRewards(address, validator);
         dataMsg.push(msg);
     }
-    const gasLimit = (await GetEstimateGas(rpc, dataMsg, mnemonic) * 1.2).toString();
+    const gasLimit = (Math.floor(await GetEstimateGas(rpc, dataMsg, mnemonic) * 1.2)).toString();
     const amountFee = Math.ceil(Number(gasLimit) * Number(config.gasPrice));
     const result = await SendTx(rpc, dataMsg, mnemonic, { amount: coins(amountFee, config.coin), gas: gasLimit }, '');
 
@@ -29,7 +29,7 @@ const DelegateTokens = async(mnemonic: string) => {
 
     const balance = parseInt((await GetBalance(rpc, address)).amount);
     let msg = await dataDelegate(address, validator, '1000');
-    const gasLimit = await GetEstimateGas(rpc, [msg], mnemonic) * 1.2;
+    const gasLimit = Math.floor(await GetEstimateGas(rpc, [msg], mnemonic) * 1.2);
     const fee = Math.floor(gasLimit * Number(config.gasPrice) * 10);
     const amount = balance - Math.floor(balance * 0.99) >= fee ? Math.floor(balance * 0.99) : balance - fee;
     if (amount <= 0) {
